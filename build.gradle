@@ -1,0 +1,107 @@
+plugins {
+    id 'fabric-loom' version "1.0-SNAPSHOT"
+    id 'legacy-looming' version "1.0-SNAPSHOT"
+    id 'maven-publish'
+}
+
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
+
+//archivesBaseName = project.archives_base_name
+//version = project.mod_version
+//group = project.maven_group
+
+version = "1.0"
+group= "dev.seodan.fastreconnect"
+archivesBaseName = "fastreconnect"
+
+repositories {
+    maven {
+        name = 'Babric'
+        url = 'https://maven.glass-launcher.net/babric'
+    }
+}
+loom {
+    setIntermediaryUrl('https://repo.legacyfabric.net/repository/legacyfabric/net/legacyfabric/intermediary/%1$s/intermediary-%1$s-v2.jar');
+}
+
+def lwjgl2 = !project.minecraft_version.startsWith("1.13")
+def currentOs = System.getProperty("os.name").toLowerCase(Locale.ENGLISH)
+
+dependencies {
+    minecraft "com.mojang:minecraft:1.8.9"
+    mappings "net.legacyfabric:yarn:1.8.9+build.458:v2"
+    modImplementation "net.fabricmc:fabric-loader:0.14.13"
+
+    modImplementation "net.legacyfabric.legacy-fabric-api:legacy-fabric-api:1.9.0+1.8.9"
+
+    if (lwjgl2) {
+        if (currentOs.contains("mac")) {
+            implementation 'org.lwjgl.lwjgl:lwjgl_util:2.9.4-nightly-20150209'
+            implementation 'org.lwjgl.lwjgl:lwjgl:2.9.4-nightly-20150209'
+            implementation 'org.lwjgl.lwjgl:lwjgl-platform:2.9.4-nightly-20150209'
+        } else if (currentOs.contains("linux")) {
+            implementation 'org.lwjgl.lwjgl:lwjgl_util:2.9.4-babric.1'
+            implementation 'org.lwjgl.lwjgl:lwjgl:2.9.4-babric.1'
+            implementation 'org.lwjgl.lwjgl:lwjgl-platform:2.9.4-babric.1'
+        }
+    }
+}
+
+if (lwjgl2) {
+    if (currentOs.contains("mac")) {
+        configurations.all {
+            resolutionStrategy {
+                dependencySubstitution {
+                    substitute module('org.lwjgl.lwjgl:lwjgl_util:2.9.2-nightly-201408222') with module('org.lwjgl.lwjgl:lwjgl_util:2.9.4-nightly-20150209')
+                    substitute module('org.lwjgl.lwjgl:lwjgl:2.9.2-nightly-201408222') with module('org.lwjgl.lwjgl:lwjgl:2.9.4-nightly-20150209')
+                }
+                force 'org.lwjgl.lwjgl:lwjgl-platform:2.9.4-nightly-20150209'
+            }
+        }
+    } else if (currentOs.contains("linux")) {
+        configurations.all {
+            resolutionStrategy {
+                dependencySubstitution {
+                    substitute(module('org.lwjgl.lwjgl:lwjgl_util:2.9.4-nightly-20150209')) using module('org.lwjgl.lwjgl:lwjgl_util:2.9.4-babric.1')
+                    substitute module('org.lwjgl.lwjgl:lwjgl:2.9.4-nightly-20150209') using module('org.lwjgl.lwjgl:lwjgl:2.9.4-babric.1')
+                }
+                force 'org.lwjgl.lwjgl:lwjgl-platform:2.9.4-babric.1'
+            }
+        }
+    }
+}
+
+processResources {
+    inputs.property "version", project.version
+
+    filesMatching("fabric.mod.json") {
+        expand "version": project.version
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    it.options.encoding = "UTF-8"
+    if (JavaVersion.current().isJava9Compatible()) it.options.release = 8
+}
+
+java {
+    withSourcesJar()
+}
+
+jar {
+    from("LICENSE") {
+        rename { "${it}_${project.archivesBaseName}" }
+    }
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
+
+    repositories {
+    }
+}

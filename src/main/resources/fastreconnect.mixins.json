@@ -1,0 +1,9 @@
+{
+  "required": true,
+  "package": "dev.seodan.fastreconnect.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "client": [
+    "DisconnectedScreenMixin",
+    "MultiplayerScreenAccessor"
+  ]
+}
