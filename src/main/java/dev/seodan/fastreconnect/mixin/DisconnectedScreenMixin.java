@@ -1,8 +1,10 @@
 package dev.seodan.fastreconnect.mixin;
 
 import com.google.common.collect.Lists;
+import dev.seodan.fastreconnect.FastReconnect;
 import net.minecraft.client.gui.screen.DisconnectedScreen;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screen.multiplayer.MultiplayerScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.resource.language.I18n;
 import org.spongepowered.asm.mixin.*;
@@ -29,7 +31,7 @@ public abstract class DisconnectedScreenMixin extends Screen {
     @Inject(method = "buttonClicked", at = @At("RETURN"))
     private void onClick(ButtonWidget button, CallbackInfo info) {
         if (button.id == 1) {
-            ((MultiplayerScreenAccessor)parent).invokeConnect();
+            ((MultiplayerScreenAccessor) parent).invokeConnect(FastReconnect.cachedInfo);
         }
     }
 

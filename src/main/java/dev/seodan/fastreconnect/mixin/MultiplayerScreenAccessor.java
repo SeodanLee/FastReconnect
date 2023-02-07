@@ -8,9 +8,6 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 
 @Mixin(MultiplayerScreen.class)
 public interface MultiplayerScreenAccessor {
-    @Accessor("selectedEntry")
-    public ServerInfo getSelectedEntry();
-
     @Invoker("connect")
-    public void invokeConnect();
+    public void invokeConnect(ServerInfo entry);
 }
