@@ -8,6 +8,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import dev.seodan.fastreconnect.FastReconnect;
+
 @Mixin(GuiDisconnected.class)
 public abstract class DisconnectedScreenMixin extends GuiScreen {
     @Shadow
@@ -25,7 +27,7 @@ public abstract class DisconnectedScreenMixin extends GuiScreen {
     @Inject(method = "actionPerformed", at = @At("RETURN"))
     private void onClick(GuiButton p_actionPerformed_1_, CallbackInfo info) {
         if (p_actionPerformed_1_.id == 1) {
-            ((MultiplayerScreenAccessor)parentScreen).invokeConnect();
+            ((MultiplayerScreenAccessor)parentScreen).invokeConnect(FastReconnect.cachedInfo);
         }
     }
 

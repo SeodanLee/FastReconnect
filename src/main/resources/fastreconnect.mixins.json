@@ -5,6 +5,7 @@
   "refmap": "mixins.fastreconnect.refmap.json",
   "mixins": [
     "DisconnectedScreenMixin",
-    "MultiplayerScreenAccessor"
+    "MultiplayerScreenAccessor",
+    "MultiplayerScreenMixin"
   ]
 }
