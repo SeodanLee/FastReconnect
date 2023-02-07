@@ -1,16 +1,11 @@
 package dev.seodan.fastreconnect.mixin;
 
-import net.minecraft.client.gui.screen.multiplayer.MultiplayerScreen;
-import net.minecraft.client.network.ServerInfo;
+import net.minecraft.client.gui.GuiMultiplayer;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.gen.Accessor;
 import org.spongepowered.asm.mixin.gen.Invoker;
 
-@Mixin(MultiplayerScreen.class)
+@Mixin(GuiMultiplayer.class)
 public interface MultiplayerScreenAccessor {
-    @Accessor("selectedEntry")
-    public ServerInfo getSelectedEntry();
-
-    @Invoker("connect")
+    @Invoker("connectToSelected")
     public void invokeConnect();
 }

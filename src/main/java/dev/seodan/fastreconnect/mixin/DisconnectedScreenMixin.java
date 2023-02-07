@@ -1,42 +1,38 @@
 package dev.seodan.fastreconnect.mixin;
 
-import com.google.common.collect.Lists;
-import net.minecraft.client.gui.screen.DisconnectedScreen;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.resource.language.I18n;
+import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiDisconnected;
+import net.minecraft.client.gui.GuiScreen;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.List;
-
-@Mixin(DisconnectedScreen.class)
-public abstract class DisconnectedScreenMixin extends Screen {
+@Mixin(GuiDisconnected.class)
+public abstract class DisconnectedScreenMixin extends GuiScreen {
     @Shadow
-    private int reasonHeight;
+    private int field_175353_i;
 
     @Shadow
     @Final
-    private Screen parent;
+    private GuiScreen parentScreen;
 
-    @Inject(method = "init", at = @At("RETURN"))
+    @Inject(method = "initGui", at = @At("RETURN"))
     private void initReconnectButton(CallbackInfo info) {
-        this.buttons.add(new ButtonWidget(1, this.width / 2 - 100, this.height / 2 + this.reasonHeight / 2 + this.textRenderer.fontHeight + 24, "Reconnect"));
+        this.buttonList.add(new GuiButton(1, this.width / 2 - 100, this.height / 2 + this.field_175353_i / 2 + this.fontRendererObj.FONT_HEIGHT + 24, "Reconnect"));
     }
 
-    @Inject(method = "buttonClicked", at = @At("RETURN"))
-    private void onClick(ButtonWidget button, CallbackInfo info) {
-        if (button.id == 1) {
-            ((MultiplayerScreenAccessor)parent).invokeConnect();
+    @Inject(method = "actionPerformed", at = @At("RETURN"))
+    private void onClick(GuiButton p_actionPerformed_1_, CallbackInfo info) {
+        if (p_actionPerformed_1_.id == 1) {
+            ((MultiplayerScreenAccessor)parentScreen).invokeConnect();
         }
     }
 
-    @Inject(method = "keyPressed", at = @At("RETURN"))
-    private void onKeyPressed(char id, int code, CallbackInfo info) {
-        if (code == 1) {
-            this.client.setScreen(this.parent);
+    @Inject(method = "keyTyped", at = @At("RETURN"))
+    private void onKeyPressed(char p_keyTyped_1_, int p_keyTyped_2_, CallbackInfo info) {
+        if (p_keyTyped_2_ == 1) {
+            this.mc.displayGuiScreen(this.parentScreen);
         }
     }
 }
